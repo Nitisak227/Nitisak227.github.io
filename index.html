@@ -132,7 +132,7 @@
   .time-badge input:focus { outline: none; }
 
   /* AMPLE */
-  .ample-grid { display: grid; grid-template-columns: 40px 1fr; gap: 6px 10px; align-items: start; }
+  .ample-grid { display: grid; grid-template-columns: 40px 1fr; gap: 18px 10px; align-items: start; }
   .ample-letter { font-size: 18px; font-weight: 900; color: var(--primary-light); line-height: 1; padding-top: 6px; }
   .ample-field label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; display: block; }
 
@@ -222,7 +222,7 @@
           <label class="cb-item"><input type="checkbox"> AF</label>
           <label class="cb-item"><input type="checkbox"> on warfarin</label>
           <label class="cb-item"><input type="checkbox"> on ASA</label>
-          <label class="cb-item"><input type="checkbox"> no NOAC</label>
+          <label class="cb-item"><input type="checkbox"> On DOAC</label>
           <label class="cb-item"><input type="checkbox"> COPD</label>
           <label class="cb-item"><input type="checkbox"> Asthma</label>
         </div>
@@ -643,7 +643,7 @@
   <div class="section-header"><span>7</span> Management</div>
   <div class="section-body">
     <div class="cb-group" style="margin-bottom:8px">
-      <label class="cb-item"><input type="checkbox"> lab-pending, NSS iv rate 80 ml/hr</label>
+      <label class="cb-item"><input type="checkbox"> NPO, Lab-pending, IV NSS rate 80 ml/hr</label>
     </div>
     <textarea class="w-full" style="min-height:80px" placeholder="Management…" data-label="Management"></textarea>
   </div>
@@ -666,7 +666,7 @@
 
 <!-- BOTTOM ACTION BAR -->
 <div class="bottom-bar">
-  <button class="btn btn-copy" onclick="copyToClipboard()">📋 Copy Summary to Clipboard</button>
+  <button class="btn btn-copy" onclick="copyToClipboard()">📋 Copy Summary for Refer</button>
   <button class="btn btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
 </div>
 
@@ -719,6 +719,18 @@
     btn.closest('.avpu-row').querySelectorAll('.avpu-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
   }
+
+  /* ── Enter key toggles focused checkbox ── */
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Enter'){
+      const focused = document.activeElement;
+      if(focused && focused.type === 'checkbox'){
+        e.preventDefault();
+        focused.checked = !focused.checked;
+        focused.dispatchEvent(new Event('change', {bubbles:true}));
+      }
+    }
+  });
 
   /* ── Checkbox highlight ── */
   document.addEventListener('change', e=>{
