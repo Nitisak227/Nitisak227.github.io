@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trauma Assessment Checklist</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2563a8;
+    --border: #ccd5e0;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --gray-bg: #f4f6f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); font-size: 13px; line-height: 1.5; }
+
+  /* HEADER */
+  .page-header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #0f2540 100%);
+    color: white; padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page-header h1 { font-size: 19px; font-weight: 700; }
+  .page-header .subtitle { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .btn-group { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .btn { padding: 6px 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s; }
+  .btn-print { background: white; color: var(--primary); }
+  .btn-reset { background: #e74c3c; color: white; }
+  .btn-copy { background: #27ae60; color: white; }
+  .btn-print:hover { background: #dce8ff; }
+  .btn-reset:hover { background: #c0392b; }
+  .btn-copy:hover { background: #1e8449; }
+
+  /* LAYOUT */
+  .main-container { max-width: 1500px; margin: 0 auto; padding: 14px; }
+  .two-col-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .col-left, .col-right { min-width: 0; }
+  @media (max-width: 900px) { .two-col-layout { grid-template-columns: 1fr; } }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* SECTION CARD */
+  .section { background: white; border-radius: 8px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .section-header { background: var(--primary); color: white; padding: 8px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .section-header .badge { background: rgba(255,255,255,0.2); padding: 1px 8px; border-radius: 12px; font-size: 11px; }
+  .section-body { padding: 12px 14px; }
+
+  /* ABCDE CARDS */
+  .abcde-card { border-radius: 7px; border: 1.5px solid; margin-bottom: 10px; overflow: hidden; }
+  .abcde-header { padding: 7px 12px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .abcde-header .letter-badge { width: 26px; height: 26px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; flex-shrink: 0; }
+  .abcde-body { padding: 10px 12px; background: white; }
+
+  /* ABCDE colours */
+  .card-A { border-color: #3498db; } .card-A .abcde-header { background: #3498db; color: white; } .card-A .letter-badge { color: #3498db; }
+  .card-B { border-color: #27ae60; } .card-B .abcde-header { background: #27ae60; color: white; } .card-B .letter-badge { color: #27ae60; }
+  .card-C { border-color: #e74c3c; } .card-C .abcde-header { background: #e74c3c; color: white; } .card-C .letter-badge { color: #e74c3c; }
+  .card-D { border-color: #9b59b6; } .card-D .abcde-header { background: #9b59b6; color: white; } .card-D .letter-badge { color: #9b59b6; }
+  .card-E { border-color: #f39c12; } .card-E .abcde-header { background: #f39c12; color: white; } .card-E .letter-badge { color: #f39c12; }
+  .card-X { border-color: #922b21; } .card-X .abcde-header { background: #922b21; color: white; } .card-X .letter-badge { color: #922b21; }
+
+  /* MGMT CARDS - same ABCDE colours */
+  .mgmt-A { border-color: #3498db; } .mgmt-A .mgmt-header { background: #3498db; color: white; }
+  .mgmt-B { border-color: #27ae60; } .mgmt-B .mgmt-header { background: #27ae60; color: white; }
+  .mgmt-C { border-color: #e74c3c; } .mgmt-C .mgmt-header { background: #e74c3c; color: white; }
+  .mgmt-D { border-color: #9b59b6; } .mgmt-D .mgmt-header { background: #9b59b6; color: white; }
+  .mgmt-notes { border-color: #7f8c8d; } .mgmt-notes .mgmt-header { background: #7f8c8d; color: white; }
+  .mgmt-card { border-radius: 7px; border: 1.5px solid; margin-bottom: 10px; overflow: hidden; }
+  .mgmt-header { padding: 7px 12px; font-weight: 700; font-size: 13px; }
+  .mgmt-body { padding: 10px 12px; background: white; }
+
+  /* FORM ELEMENTS */
+  .form-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; flex-wrap: wrap; }
+  .form-row label { font-weight: 600; white-space: nowrap; font-size: 12px; }
+  input[type="text"], input[type="number"], textarea, select {
+    border: 1.5px solid var(--border); border-radius: 5px; padding: 5px 8px;
+    font-size: 12.5px; font-family: inherit; background: #fafbfc; transition: border-color 0.2s; color: var(--text);
+  }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary-light); background: white; }
+  input.w-full, textarea.w-full { width: 100%; }
+  input.w-sm { width: 70px; }
+  input.w-md { width: 110px; }
+  input.w-lg { width: 160px; }
+  textarea { resize: vertical; }
+
+  /* CHECKBOXES */
+  .cb-group { display: flex; flex-wrap: wrap; gap: 5px 12px; }
+  .cb-item { display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12.5px; padding: 3px 7px; border-radius: 4px; transition: background 0.15s; user-select: none; }
+  .cb-item:hover { background: #edf2ff; }
+  .cb-item input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary-light); flex-shrink: 0; }
+
+  /* VITALS BOX */
+  .vitals-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .vital-box { border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 10px; text-align: center; background: #fafbff; min-width: 100px; }
+  .vital-box .vb-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+  .vital-box input { width: 100%; border: none; text-align: center; font-size: 16px; font-weight: 700; background: transparent; color: var(--primary); padding: 2px 0; }
+  .vital-box input:focus { outline: none; }
+  .vital-box .vb-unit { font-size: 10px; color: var(--text-muted); }
+
+  /* GCS */
+  .gcs-grid { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .gcs-item label { display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; }
+  .gcs-item select { width: 65px; text-align: center; }
+  .gcs-total { background: var(--primary); color: white; border-radius: 8px; padding: 6px 14px; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .gcs-total .total-num { font-size: 22px; font-weight: 900; display: block; line-height: 1; }
+  .gcs-total .total-lbl { font-size: 10px; opacity: 0.8; }
+
+  /* PUPILS */
+  .pupil-box { border: 1.5px solid var(--border); border-radius: 6px; padding: 7px 10px; background: #fafbfc; }
+  .pupil-box .pb-title { font-weight: 700; font-size: 11px; margin-bottom: 5px; text-transform: uppercase; color: var(--text-muted); }
+
+  /* PASS / NOT PASS */
+  .pass-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 1.5px dashed var(--border); }
+  .pass-label { font-weight: 700; font-size: 12px; color: var(--text-muted); }
+  .pass-btn { padding: 5px 18px; border-radius: 20px; border: 2px solid; cursor: pointer; font-weight: 700; font-size: 12px; transition: 0.2s; background: white; }
+  .pass-btn.pass { border-color: #27ae60; color: #27ae60; }
+  .pass-btn.fail { border-color: #e74c3c; color: #e74c3c; }
+  .pass-btn.pass.active { background: #27ae60; color: white; }
+  .pass-btn.fail.active { background: #e74c3c; color: white; }
+
+  /* SUB-LABEL */
+  .sub-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; margin-top: 8px; border-left: 3px solid var(--primary-light); padding-left: 6px; }
+
+  /* ADJUNCT CARD */
+  .adj-card { border: 1.5px solid var(--border); border-radius: 7px; overflow: hidden; margin-bottom: 10px; }
+  .adj-header { background: #e8eef5; padding: 7px 12px; font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; }
+  .adj-body { padding: 8px 12px; }
+  .time-badge { display: inline-flex; align-items: center; gap: 5px; background: #e8f0fe; border: 1px solid #b3c7f0; border-radius: 4px; padding: 3px 8px; font-size: 11px; color: var(--primary); }
+  .time-badge input { border: none; background: transparent; font-size: 11px; width: 70px; padding: 0; color: var(--primary); font-weight: 600; }
+  .time-badge input:focus { outline: none; }
+
+  /* AMPLE */
+  .ample-grid { display: grid; grid-template-columns: 40px 1fr; gap: 6px 10px; align-items: start; }
+  .ample-letter { font-size: 18px; font-weight: 900; color: var(--primary-light); line-height: 1; padding-top: 6px; }
+  .ample-field label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; display: block; }
+
+  /* AVPU */
+  .avpu-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .avpu-btn { padding: 5px 14px; border-radius: 5px; border: 2px solid var(--border); cursor: pointer; font-weight: 700; font-size: 12px; background: white; transition: 0.2s; }
+  .avpu-btn:hover { background: #edf2ff; }
+  .avpu-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* BOTTOM ACTION BAR */
+  .bottom-bar {
+    position: sticky; bottom: 0; z-index: 100;
+    background: #1a3a5c; border-top: 2px solid #0f2540;
+    padding: 10px 24px; display: flex; align-items: center; justify-content: center;
+    gap: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .bottom-bar .btn-copy { background: #27ae60; color: white; font-size: 13px; padding: 8px 22px; }
+  .bottom-bar .btn-print { background: white; color: #1a3a5c; font-size: 13px; padding: 8px 22px; }
+  .bottom-bar .btn-copy:hover { background: #1e8449; }
+  .bottom-bar .btn-print:hover { background: #dce8ff; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 70px; right: 24px; background: #27ae60; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px; display: none; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+  /* PRINT */
+  @media print {
+    body { background: white; font-size: 11px; }
+    .page-header { padding: 8px 14px; }
+    .btn-group, .bottom-bar, #toast { display: none !important; }
+    .main-container { padding: 6px; max-width: none; }
+    .section { box-shadow: none; margin-bottom: 8px; page-break-inside: avoid; }
+    .abcde-card, .mgmt-card, .adj-card { page-break-inside: avoid; }
+    @page { margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div>
+    <h1>🚨 Trauma Assessment Checklist</h1>
+    <div class="subtitle">Nitisak Kitcharoentanarak, MD</div>
+    <div class="subtitle" style="opacity:0.55;font-size:10px">latest update on 22nd March 2026</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:12px"><span style="opacity:0.7">Arrival: </span><span id="arrival-time" style="font-weight:700"></span></div>
+    <div class="btn-group">
+      <button class="btn btn-reset" onclick="resetForm()">↺ New Patient</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+<div class="two-col-layout">
+<div class="col-left">
+
+<!-- ══════════ 1. PATIENT IDENTIFICATION ══════════ -->
+<div class="section" id="sec-pt">
+  <div class="section-header"><span>1</span> Patient Identification <span class="badge">Demographics</span></div>
+  <div class="section-body">
+    <div class="grid-2" style="margin-bottom:10px">
+      <div>
+        <div class="form-row">
+          <label>ชื่อ</label>
+          <input type="text" class="w-full" placeholder="Patient full name" id="pt-name" data-label="ชื่อ">
+        </div>
+        <div class="form-row">
+          <label>HN / ID</label>
+          <input type="text" class="w-md" placeholder="Hospital number" id="pt-hn" data-label="HN">
+          <label>Age</label>
+          <input type="number" class="w-sm" placeholder="yr" id="pt-age" data-label="อายุ">
+        </div>
+      </div>
+      <div>
+        <div class="sub-label" style="margin-top:0">Underlying Diseases</div>
+        <div class="cb-group">
+          <label class="cb-item"><input type="checkbox"> Unknown</label>
+          <label class="cb-item"><input type="checkbox"> DM</label>
+          <label class="cb-item"><input type="checkbox"> HTN</label>
+          <label class="cb-item"><input type="checkbox"> DLP</label>
+          <label class="cb-item"><input type="checkbox"> CKD3b</label>
+          <label class="cb-item"><input type="checkbox"> CKD4</label>
+          <label class="cb-item"><input type="checkbox"> CKD5</label>
+          <label class="cb-item"><input type="checkbox"> alcoholic cirrhosis</label>
+          <label class="cb-item"><input type="checkbox"> AF</label>
+          <label class="cb-item"><input type="checkbox"> on warfarin</label>
+          <label class="cb-item"><input type="checkbox"> on ASA</label>
+          <label class="cb-item"><input type="checkbox"> no NOAC</label>
+          <label class="cb-item"><input type="checkbox"> COPD</label>
+          <label class="cb-item"><input type="checkbox"> Asthma</label>
+        </div>
+        <div class="form-row" style="margin-top:6px">
+          <label>Others</label>
+          <input type="text" class="w-full" placeholder="Other underlying conditions…" data-label="Other conditions">
+        </div>
+      </div>
+    </div>
+    <!-- เวลาเกิดเหตุ — below underlying diseases -->
+    <div class="form-row" style="margin-bottom:10px">
+      <label>เวลาเกิดเหตุ</label>
+      <input type="text" class="w-md" id="onset-date" placeholder="DD/MM/YYYY" data-label="เวลาเกิดเหตุ">
+      <label>เวลา</label>
+      <input type="text" id="onset-time" style="width:90px" placeholder="HH:MM" data-label="Onset Time">
+    </div>
+    <!-- MECHANISM — large box -->
+    <div>
+      <div class="sub-label" style="margin-top:0">Mechanism of Injury</div>
+      <textarea class="w-full" style="min-height:90px" placeholder="Describe full mechanism: MVA (speed, restrained, airbag deployed), fall (height, surface), assault, stab/GSW (weapon, location), time of injury, pre-hospital interventions, EMS findings…" data-label="Mechanism of Injury"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 2. PRIMARY SURVEY ══════════ -->
+<div class="section" id="sec-primary">
+  <div class="section-header"><span>2</span> Primary Survey <span class="badge">XABCDE</span></div>
+  <div class="section-body">
+
+    <!-- X: EXSANGUINATION -->
+    <div class="abcde-card card-X" id="card-X">
+      <div class="abcde-header"><span class="letter-badge">X</span> Exsanguination Control</div>
+      <div class="abcde-body">
+        <div class="sub-label" style="margin-top:0">Normal Finding</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> No exsanguination
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe life-threatening external haemorrhage: site, tourniquet applied, wound packing, junctional bleed, estimated blood loss…" data-label="X Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'X')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'X')">✗ Not Pass</button>
+          <span id="pass-status-X" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- A: AIRWAY -->
+    <div class="abcde-card card-A" id="card-A">
+      <div class="abcde-header"><span class="letter-badge">A</span> Airway &amp; C-Spine Control</div>
+      <div class="abcde-body">
+        <div class="sub-label" style="margin-top:0">Airway Status</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item"><input type="checkbox" id="aw-cantalk"> Can talk</label>
+          <label class="cb-item"><input type="checkbox" id="aw-nostridor"> No stridor</label>
+          <label class="cb-item"><input type="checkbox" id="aw-patent"> Can't talk but patent airway</label>
+          <label class="cb-item"><input type="checkbox" id="aw-stridor"> Stridor</label>
+          <label class="cb-item"><input type="checkbox"> Airway obstructed</label>
+        </div>
+        <div class="sub-label">C-Spine</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item"><input type="checkbox"> On hard collar</label>
+        </div>
+        <div class="sub-label">Airway Management</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item"><input type="checkbox" id="aw-room-air" name="airway-device"> on room air</label>
+          <label class="cb-item"><input type="checkbox" id="aw-mask" name="airway-device"> Oxygen mask with bag 10 LPM</label>
+          <label class="cb-item" style="align-items:center">
+            <input type="checkbox" id="aw-ett" name="airway-device"> ETT —
+            <span style="margin-left:6px;font-size:12px;font-weight:600">Size:</span>
+            <input type="text" style="width:52px;margin-left:4px" placeholder="mm" data-label="ETT size">
+            <span style="margin-left:8px;font-size:12px;font-weight:600">Depth:</span>
+            <input type="text" style="width:52px;margin-left:4px" placeholder="cm" data-label="ETT depth">
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal findings: stridor, airway obstruction, secretions/blood in airway, difficult intubation, ETT misplacement, etc." data-label="A Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'A')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'A')">✗ Not Pass</button>
+          <span id="pass-status-A" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: BREATHING -->
+    <div class="abcde-card card-B" id="card-B">
+      <div class="abcde-header"><span class="letter-badge">B</span> Breathing &amp; Ventilation</div>
+      <div class="abcde-body">
+        <div class="vitals-row">
+          <div class="vital-box">
+            <div class="vb-label">RR</div>
+            <input type="text" placeholder="—" data-label="RR">
+            <div class="vb-unit">/min</div>
+          </div>
+          <div class="vital-box" style="min-width:130px">
+            <div class="vb-label">SpO₂ — Room Air</div>
+            <input type="text" placeholder="—" data-label="SpO2 room air">
+            <div class="vb-unit">%</div>
+          </div>
+          <div class="vital-box" style="min-width:200px">
+            <div class="vb-label" id="spo2-device-label">SpO₂ — On Device</div>
+            <input type="text" placeholder="—" data-label="SpO2 on device" id="spo2-device-input">
+            <div class="vb-unit">%</div>
+          </div>
+        </div>
+        <div class="sub-label" style="margin-top:4px">Normal Finding</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> No open chest wound, no subcutaneous emphysema, trachea in midline, equal breath sound both lungs
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal findings: decreased/absent breath sounds (R/L), tracheal deviation, crepitus, flail chest, open wound, etc." data-label="B Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'B')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'B')">✗ Not Pass</button>
+          <span id="pass-status-B" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: CIRCULATION -->
+    <div class="abcde-card card-C" id="card-C">
+      <div class="abcde-header"><span class="letter-badge">C</span> Circulation &amp; Haemorrhage Control</div>
+      <div class="abcde-body">
+        <div class="sub-label" style="margin-top:0">Level of Consciousness</div>
+        <div class="avpu-row">
+          <button class="avpu-btn" onclick="toggleAVPU(this)">Good Consciousness</button>
+          <button class="avpu-btn" onclick="toggleAVPU(this)">Drowsiness</button>
+          <button class="avpu-btn" onclick="toggleAVPU(this)">Stupor</button>
+          <button class="avpu-btn" onclick="toggleAVPU(this)">Coma</button>
+        </div>
+        <div class="vitals-row">
+          <div class="vital-box">
+            <div class="vb-label">HR</div>
+            <input type="text" placeholder="—" data-label="HR">
+            <div class="vb-unit">bpm</div>
+          </div>
+          <div class="vital-box">
+            <div class="vb-label">BP</div>
+            <input type="text" id="bp-input" placeholder="—/—" data-label="BP" oninput="calcMAP()">
+            <div class="vb-unit">mmHg</div>
+          </div>
+          <div class="vital-box">
+            <div class="vb-label">MAP</div>
+            <input type="text" id="map-input" placeholder="—" data-label="MAP">
+            <div class="vb-unit">mmHg</div>
+          </div>
+          <div class="vital-box">
+            <div class="vb-label">Temp</div>
+            <input type="text" placeholder="—" data-label="Temp">
+            <div class="vb-unit">°C</div>
+          </div>
+        </div>
+        <div class="sub-label">Normal Finding</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Pulse 2+, cap refill &lt; 2 sec, no active external bleeding, no long bone deformity
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal findings: pulse quality, active bleeding site, long bone deformity location, pelvic instability, skin changes, etc." data-label="C Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'C')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'C')">✗ Not Pass</button>
+          <span id="pass-status-C" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- D: DISABILITY -->
+    <div class="abcde-card card-D" id="card-D">
+      <div class="abcde-header"><span class="letter-badge">D</span> Disability &amp; Neurological Status</div>
+      <div class="abcde-body">
+        <div class="sub-label" style="margin-top:0">GCS Score</div>
+        <div class="gcs-grid" style="margin-bottom:10px">
+          <div class="gcs-item">
+            <label>Eyes (E)</label>
+            <select id="gcs-e" onchange="calcGCS()">
+              <option value="4">4 — Spontaneous</option>
+              <option value="3">3 — To voice</option>
+              <option value="2">2 — To pain</option>
+              <option value="1">1 — None</option>
+            </select>
+          </div>
+          <div class="gcs-item">
+            <label>Verbal (V)</label>
+            <select id="gcs-v" onchange="calcGCS()">
+              <option value="5">5 — Oriented</option>
+              <option value="4">4 — Confused</option>
+              <option value="3">3 — Words</option>
+              <option value="2">2 — Sounds</option>
+              <option value="1">1 — None</option>
+              <option value="T">T — Intubated</option>
+            </select>
+          </div>
+          <div class="gcs-item">
+            <label>Motor (M)</label>
+            <select id="gcs-m" onchange="calcGCS()">
+              <option value="6">6 — Obeys</option>
+              <option value="5">5 — Localises</option>
+              <option value="4">4 — Withdraws</option>
+              <option value="3">3 — Abn. flex.</option>
+              <option value="2">2 — Extension</option>
+              <option value="1">1 — None</option>
+            </select>
+          </div>
+          <div class="gcs-total">
+            <span class="total-num" id="gcs-total">15</span>
+            <span class="total-lbl">GCS</span>
+          </div>
+        </div>
+        <div class="sub-label">Normal Finding</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Pupil 2 mm react to light both eyes, no lateralizing signs, equal limb movement
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:65px" placeholder="Describe abnormal findings: pupil size/reactivity (R/L), anisocoria, lateralizing signs, limb movement asymmetry, posturing, etc." data-label="D Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'D')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'D')">✗ Not Pass</button>
+          <span id="pass-status-D" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- E: EXPOSURE -->
+    <div class="abcde-card card-E" id="card-E">
+      <div class="abcde-header"><span class="letter-badge">E</span> Exposure &amp; Environment Control</div>
+      <div class="abcde-body">
+        <div class="sub-label" style="margin-top:0">Normal Findings</div>
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Log roll - no wound on the back, no T-L-S spine tenderness
+          </label>
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px;margin-top:4px">
+            <input type="checkbox"> Normal sphincter tone, positive bulbocavernosus reflex
+          </label>
+        </div>
+        <div class="sub-label">Abnormal Findings</div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal findings: wounds on back, T-L-S spine tenderness, abnormal sphincter tone, absent bulbocavernosus reflex, hypothermia, skin injuries, etc." data-label="E Abnormal Findings"></textarea>
+        <div class="pass-row">
+          <span class="pass-label">Assessment:</span>
+          <button class="pass-btn pass" onclick="togglePass(this,'E')">✓ Pass</button>
+          <button class="pass-btn fail" onclick="togglePass(this,'E')">✗ Not Pass</button>
+          <span id="pass-status-E" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /col-left -->
+<div class="col-right">
+
+<!-- ══════════ 3. ADJUNCTS TO PRIMARY SURVEY ══════════ -->
+<div class="section" id="sec-adj">
+  <div class="section-header"><span>3</span> Adjuncts to Primary Survey <span class="badge">Imaging</span></div>
+  <div class="section-body">
+
+    <div class="adj-card">
+      <div class="adj-header">CXR</div>
+      <div class="adj-body">
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> No pneumothorax, no hemothorax, no rib fracture
+          </label>
+        </div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal CXR findings: pneumothorax (R/L), haemothorax, widened mediastinum, rib fractures, ETT/chest tube position, pulmonary contusion…" data-label="CXR findings"></textarea>
+      </div>
+    </div>
+
+    <div class="adj-card">
+      <div class="adj-header">eFAST</div>
+      <div class="adj-body">
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Negative at time <input type="text" style="width:65px;margin-left:6px" placeholder="HH:MM" data-label="eFAST negative time">
+          </label>
+        </div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal eFAST findings: lung sliding absent (R/L), pleural effusion, haemothorax, pericardial effusion…" data-label="eFAST findings"></textarea>
+      </div>
+    </div>
+
+    <div class="adj-card">
+      <div class="adj-header">FAST</div>
+      <div class="adj-body">
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Negative at time <input type="text" style="width:65px;margin-left:6px" placeholder="HH:MM" data-label="FAST negative time">
+          </label>
+        </div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Describe abnormal FAST findings: free fluid at Morrison's pouch (RUQ), splenorenal (LUQ), pelvis/pouch of Douglas, pericardial effusion…" data-label="FAST findings"></textarea>
+      </div>
+    </div>
+
+    <div class="adj-card">
+      <div class="adj-header">Film pelvis</div>
+      <div class="adj-body">
+        <div class="cb-group" style="margin-bottom:8px">
+          <label class="cb-item" style="background:#d8f3dc;border:1px solid #95d5a8;border-radius:5px">
+            <input type="checkbox"> Normal pelvis, no fracture
+          </label>
+        </div>
+        <textarea class="w-full" style="min-height:50px" placeholder="Describe abnormal findings: pelvic ring fracture, open book, acetabular fracture (R/L), hip dislocation, sacral fracture…" data-label="Pelvis XR findings"></textarea>
+      </div>
+    </div>
+
+    <div class="adj-card">
+      <div class="adj-header">Additional Findings</div>
+      <div class="adj-body">
+        <textarea class="w-full" style="min-height:45px" placeholder="Other adjunct findings or notes…" data-label="Adjunct additional findings"></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ 4. SECONDARY SURVEY ══════════ -->
+<div class="section" id="sec-secondary">
+  <div class="section-header"><span>4</span> Secondary Survey <span class="badge">AMPLE + Head to Toe</span></div>
+  <div class="section-body">
+
+    <div class="sub-label" style="margin-top:0">AMPLE History</div>
+    <div class="ample-grid" style="margin-bottom:14px">
+      <div class="ample-letter">A</div>
+      <div class="ample-field">
+        <label>Allergies</label>
+        <div class="cb-group" style="margin-bottom:4px">
+          <label class="cb-item"><input type="checkbox"> No allergies</label>
+        </div>
+        <input type="text" class="w-full" placeholder="Drug / food / latex allergies and reactions…" data-label="A">
+      </div>
+      <div class="ample-letter">M</div>
+      <div class="ample-field">
+        <label>Medications (current)</label>
+        <div class="cb-group" style="margin-bottom:4px">
+          <label class="cb-item"><input type="checkbox"> No current medication</label>
+          <label class="cb-item"><input type="checkbox"> as picture</label>
+        </div>
+        <input type="text" class="w-full" placeholder="Regular medications, anticoagulants, antiplatelets…" data-label="M">
+      </div>
+      <div class="ample-letter">P</div>
+      <div class="ample-field">
+        <label>Past medical / surgical history</label>
+        <div class="cb-group" style="margin-bottom:4px">
+          <label class="cb-item"><input type="checkbox"> No past Hx/Sx</label>
+        </div>
+        <input type="text" class="w-full" placeholder="Significant PMH and previous surgeries…" data-label="P">
+      </div>
+      <div class="ample-letter">L</div>
+      <div class="ample-field">
+        <label>Last meal / oral intake</label>
+        <input type="text" class="w-full" placeholder="Time of last food / drink…" data-label="L">
+      </div>
+      <div class="ample-letter">E</div>
+      <div class="ample-field">
+        <label>Events / mechanism (detailed)</label>
+        <div class="cb-group" style="margin-bottom:4px">
+          <label class="cb-item"><input type="checkbox"> as described above</label>
+        </div>
+        <textarea class="w-full" style="min-height:55px" placeholder="Full event history, pre-hospital treatment, time of injury, witness account…" data-label="E"></textarea>
+      </div>
+    </div>
+
+    <div class="sub-label">Head-to-Toe Examination</div>
+    <textarea class="w-full" style="min-height:160px" placeholder="Record head-to-toe findings:&#10;Head / Face:&#10;Neck:&#10;Chest:&#10;Abdomen:&#10;Pelvis / Perineum:&#10;Spine (log roll):&#10;Upper extremities (R / L):&#10;Lower extremities (R / L):&#10;Neurological:" data-label="Head-to-Toe Examination"></textarea>
+
+  </div>
+</div>
+
+<!-- ══════════ 5. LAB & ADDITIONAL IMAGES ══════════ -->
+<div class="section" id="sec-lab-img">
+  <div class="section-header"><span>5</span> Lab &amp; Additional Images</div>
+  <div class="section-body">
+    <div class="grid-2">
+      <div>
+        <div class="sub-label" style="margin-top:0">Laboratory</div>
+        <div class="form-row" style="margin-bottom:6px">
+          <label>Capillary glucose</label>
+          <input type="text" style="width:80px" placeholder="mg/dL" data-label="Capillary glucose">
+          <span style="font-size:11px;color:var(--text-muted)">mg/dL</span>
+        </div>
+        <textarea class="w-full" style="min-height:80px" placeholder="Lab results…" data-label="Lab"></textarea>
+      </div>
+      <div>
+        <div class="sub-label" style="margin-top:0">Additional Images</div>
+        <textarea class="w-full" style="min-height:100px" placeholder="CT / MRI / X-ray findings…" data-label="Additional Images"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 6. IMPRESSION / DIAGNOSIS ══════════ -->
+<div class="section" id="sec-diag">
+  <div class="section-header"><span>6</span> Impression / Provisional Diagnosis</div>
+  <div class="section-body">
+    <div class="cb-group" style="margin-bottom:8px">
+      <label class="cb-item"><input type="checkbox"> Mild TBI moderate risk</label>
+    </div>
+    <textarea class="w-full" style="min-height:100px" placeholder="Write provisional / working diagnosis here…&#10;e.g. 1. Severe TBI with EDH right temporal lobe&#10;     2. Tension pneumothorax left — resolved post needle decompression&#10;     3. Pelvic ring fracture with haemodynamic instability&#10;     4. Open femur fracture right" data-label="Provisional Diagnosis"></textarea>
+  </div>
+</div>
+
+<!-- ══════════ 7. MANAGEMENT ══════════ -->
+<div class="section" id="sec-mgmt">
+  <div class="section-header"><span>7</span> Management</div>
+  <div class="section-body">
+    <div class="cb-group" style="margin-bottom:8px">
+      <label class="cb-item"><input type="checkbox"> lab-pending, NSS iv rate 80 ml/hr</label>
+    </div>
+    <textarea class="w-full" style="min-height:80px" placeholder="Management…" data-label="Management"></textarea>
+  </div>
+</div>
+
+<!-- ══════════ 8. PLAN ══════════ -->
+<div class="section" id="sec-plan">
+  <div class="section-header"><span>8</span> Plan &amp; Disposition</div>
+  <div class="section-body">
+    <div class="cb-group" style="margin-bottom:8px">
+      <label class="cb-item"><input type="checkbox"> consult refer for CT brain NC</label>
+    </div>
+    <textarea class="w-full" style="min-height:60px" placeholder="Plan and disposition…" data-label="Plan"></textarea>
+  </div>
+</div>
+
+</div><!-- /col-right -->
+</div><!-- /two-col-layout -->
+</div><!-- /main-container -->
+
+<!-- BOTTOM ACTION BAR -->
+<div class="bottom-bar">
+  <button class="btn btn-copy" onclick="copyToClipboard()">📋 Copy Summary to Clipboard</button>
+  <button class="btn btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<div id="toast">✅ Summary copied to clipboard!</div>
+
+<script>
+  /* ── Arrival time ── */
+  (function(){
+    const now = new Date();
+    document.getElementById('arrival-time').textContent =
+      now.toLocaleString('en-GB', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+    const od = document.getElementById('onset-date');
+    if(od && !od.value) od.value = [String(now.getDate()).padStart(2,'0'), String(now.getMonth()+1).padStart(2,'0'), now.getFullYear()].join('/');
+  })();
+
+  /* ── GCS ── */
+  function calcGCS(){
+    const e = document.getElementById('gcs-e').value;
+    const v = document.getElementById('gcs-v').value;
+    const m = document.getElementById('gcs-m').value;
+    const eV = parseInt(e)||0, mV = parseInt(m)||0;
+    const el = document.getElementById('gcs-total');
+    if(v==='T'){ el.textContent = (eV+mV)+'T'; el.style.background='#9b59b6'; }
+    else { const tot=eV+(parseInt(v)||0)+mV; el.textContent=tot; el.style.background = tot>=13?'#27ae60':tot>=9?'#f39c12':'#e74c3c'; }
+  }
+
+  /* ── MAP auto-calc ── */
+  function calcMAP(){
+    const bp = document.getElementById('bp-input').value.trim();
+    const mapEl = document.getElementById('map-input');
+    const m = bp.match(/^(\d+)\s*\/\s*(\d+)$/);
+    if(m){
+      const sbp=parseInt(m[1]), dbp=parseInt(m[2]);
+      const map = Math.round((sbp + 2*dbp)/3);
+      mapEl.value = map;
+    }
+  }
+
+  /* ── Pass / Not Pass ── */
+  function togglePass(btn, letter){
+    const siblings = btn.closest('.pass-row').querySelectorAll('.pass-btn');
+    siblings.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const lbl = document.getElementById('pass-status-'+letter);
+    if(lbl) lbl.textContent = btn.classList.contains('pass') ? '— Passed ✓' : '— Not Passed ✗';
+  }
+
+  /* ── AVPU ── */
+  function toggleAVPU(btn){
+    btn.closest('.avpu-row').querySelectorAll('.avpu-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ── Checkbox highlight ── */
+  document.addEventListener('change', e=>{
+    if(e.target.type==='checkbox'){
+      const item = e.target.closest('.cb-item');
+      if(item){
+        if(item.style.borderColor === 'rgb(149, 213, 168)' || item.getAttribute('style') && item.getAttribute('style').includes('95d5a8')){
+          item.style.background = e.target.checked ? '#b7e4c7' : '#d8f3dc';
+        } else {
+          item.style.background = e.target.checked ? '#dbeafe' : '';
+        }
+      }
+      // ── Airway device mutual exclusivity (room air / mask / ETT) + dynamic SpO2 label ──
+      const roomAirCb = document.getElementById('aw-room-air');
+      const maskCb = document.getElementById('aw-mask');
+      const ettCb = document.getElementById('aw-ett');
+      const airwayDevices = [roomAirCb, maskCb, ettCb];
+      if(airwayDevices.includes(e.target)){
+        airwayDevices.forEach(cb=>{ if(cb && cb !== e.target){ cb.checked = false; cb.closest('.cb-item').style.background = ''; }});
+        const lbl = document.getElementById('spo2-device-label');
+        const inp = document.getElementById('spo2-device-input');
+        if(lbl && inp){
+          if(ettCb && ettCb.checked){ lbl.textContent = 'SpO₂ on ETT'; inp.dataset.label = 'SpO2 on ETT'; }
+          else if(maskCb && maskCb.checked){ lbl.textContent = 'SpO₂ on Mask with bag'; inp.dataset.label = 'SpO2 on Mask with bag'; }
+          else { lbl.textContent = 'SpO₂ — On Device'; inp.dataset.label = 'SpO2 on device'; }
+        }
+      }
+      // ── Stridor mutual exclusivity ──
+      const stridor = document.getElementById('aw-stridor');
+      const noStridor = document.getElementById('aw-nostridor');
+      const patent = document.getElementById('aw-patent');
+      if(e.target === stridor && stridor.checked){
+        if(noStridor){ noStridor.checked = false; noStridor.closest('.cb-item').style.background = ''; }
+        if(patent){ patent.checked = false; patent.closest('.cb-item').style.background = ''; }
+      }
+      if((e.target === noStridor || e.target === patent) && e.target.checked){
+        if(stridor){ stridor.checked = false; stridor.closest('.cb-item').style.background = ''; }
+      }
+    }
+  });
+
+  /* ── Reset ── */
+  function resetForm(){
+    if(!confirm('Clear all fields and start a new patient record?')) return;
+    document.querySelectorAll('input[type="text"],input[type="number"],textarea').forEach(el=>el.value='');
+    document.querySelectorAll('input[type="checkbox"]').forEach(el=>{el.checked=false; const p=el.closest('.cb-item'); if(p) p.style.background='';});
+    document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+    document.querySelectorAll('.pass-btn,.avpu-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('[id^="pass-status-"]').forEach(el=>el.textContent='');
+    calcGCS();
+    const now2 = new Date();
+    const od = document.getElementById('onset-date');
+    if(od) od.value = [String(now2.getDate()).padStart(2,'0'), String(now2.getMonth()+1).padStart(2,'0'), now2.getFullYear()].join('/');
+    // Reset SpO2 device label
+    const spo2Lbl = document.getElementById('spo2-device-label');
+    const spo2Inp = document.getElementById('spo2-device-input');
+    if(spo2Lbl) spo2Lbl.textContent = 'SpO₂ — On Device';
+    if(spo2Inp) spo2Inp.dataset.label = 'SpO2 on device';
+  }
+
+  /* ── Copy to Clipboard ── */
+  function copyToClipboard(){
+    let out = [];
+
+    // Strip emoji from text
+    function stripEmoji(str){
+      return str.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{2300}-\u{23FF}]|[\u{FE00}-\u{FEFF}]|[\u{1F900}-\u{1F9FF}]|\p{Emoji_Presentation}/gu, '').replace(/\s+/g,' ').trim();
+    }
+
+    // Get checked checkbox texts in a container, joined on one comma-separated line
+    function checkedLine(container, excludeIds){
+      const items = [];
+      container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb=>{
+        const lbl = cb.closest('label') || cb.closest('.cb-item');
+        if(!lbl) return;
+        let txt = '';
+        lbl.childNodes.forEach(n=>{ if(n.nodeType===3) txt += n.textContent; });
+        lbl.querySelectorAll('input[type="text"]').forEach(inp=>{ if(inp.value.trim()) txt += ' ' + inp.value.trim(); });
+        txt = stripEmoji(txt).trim();
+        if(txt) items.push(txt);
+      });
+      return items.join(', ');
+    }
+
+    // Get data-label inputs, joined on one pipe-separated line; optionally filter by label list
+    function labelledLine(container, include){
+      const items = [];
+      container.querySelectorAll('[data-label]').forEach(el=>{
+        const lbl = el.dataset.label;
+        if(include && !include.includes(lbl)) return;
+        const val = el.value ? el.value.trim() : '';
+        if(val) items.push(lbl + ': ' + val);
+      });
+      return items.join('  ');
+    }
+
+    // Get data-label inputs, excluding specified labels
+    function labelledLineExclude(container, exclude){
+      const items = [];
+      container.querySelectorAll('[data-label]').forEach(el=>{
+        const lbl = el.dataset.label;
+        if(exclude && exclude.includes(lbl)) return;
+        const val = el.value ? el.value.trim() : '';
+        if(val) items.push(lbl + ': ' + val);
+      });
+      return items.join('  ');
+    }
+
+    // Emit a section title (no number)
+    function sec(title){ out.push(''); out.push(title.toUpperCase()); }
+
+    // Helper: get abnormal textarea value inside a card (data-label ending in "Abnormal Findings")
+    function getAbnormal(card){
+      let val = null;
+      card.querySelectorAll('textarea[data-label]').forEach(ta=>{
+        if(ta.dataset.label.includes('Abnormal')) val = ta.value.trim();
+      });
+      return val;
+    }
+
+    // Smart findings: if abnormal text filled → use it; else use checked normal finding
+    function findingsLine(card){
+      const abn = getAbnormal(card);
+      if(abn) return abn;
+      return checkedLine(card);
+    }
+
+    // ── Consult header ──
+    sec('Consult จากรพ.ปรางค์กู่');
+    const ptSec = document.getElementById('sec-pt');
+    const ptLine = labelledLineExclude(ptSec, ['Mechanism of Injury', 'เวลาเกิดเหตุ', 'Onset Time']);
+    if(ptLine) out.push(ptLine);
+    const ptUnd = checkedLine(ptSec);
+    if(ptUnd) out.push('Underlying: ' + ptUnd);
+    // PI (Mechanism of Injury) — blank line then PI
+    out.push('');
+    const mechEl = ptSec.querySelector('[data-label="Mechanism of Injury"]');
+    if(mechEl && mechEl.value.trim()) out.push('PI: ' + mechEl.value.trim());
+    // เวลาเกิดเหตุ below PI (combined date + time, no separate "Onset Time" label)
+    const dateEl = ptSec.querySelector('[data-label="เวลาเกิดเหตุ"]');
+    const timeEl = ptSec.querySelector('[data-label="Onset Time"]');
+    const dateVal = dateEl ? dateEl.value.trim() : '';
+    const timeVal = timeEl ? timeEl.value.trim() : '';
+    const incidentTime = [dateVal, timeVal].filter(Boolean).join(' ');
+    if(incidentTime) out.push('เวลาเกิดเหตุ: ' + incidentTime);
+
+    // ── Primary Survey ──
+    sec('Primary Survey');
+    ['X','A','B','C','D','E'].forEach(letter=>{
+      const card = document.getElementById('card-'+letter);
+      if(!card) return;
+      out.push('');
+      const ps = document.getElementById('pass-status-'+letter);
+      const psText = ps ? ps.textContent.replace(/[✓✗—]/g,'').trim() : '';
+      out.push(letter + (psText ? ' (' + psText + ')' : ''));
+
+      if(letter==='B'){
+        // Vitals first (SpO2 on device uses dynamic data-label)
+        const vitParts = [];
+        const rrEl = card.querySelector('[data-label="RR"]');
+        if(rrEl && rrEl.value.trim()) vitParts.push('RR: ' + rrEl.value.trim());
+        const spo2RoomEl = card.querySelector('[data-label="SpO2 room air"]');
+        if(spo2RoomEl && spo2RoomEl.value.trim()) vitParts.push('SpO2 room air: ' + spo2RoomEl.value.trim());
+        const spo2DevEl = document.getElementById('spo2-device-input');
+        if(spo2DevEl && spo2DevEl.value.trim()) vitParts.push(spo2DevEl.dataset.label + ': ' + spo2DevEl.value.trim());
+        const vLine = vitParts.join('  ');
+        if(vLine) out.push(vLine);
+        // Always show both normal checkboxes and abnormal text
+        const ckB = checkedLine(card); if(ckB) out.push(ckB);
+        const abnB = getAbnormal(card); if(abnB) out.push(abnB);
+      } else if(letter==='C'){
+        // Vitals
+        const vLine = labelledLine(card, ['HR','BP','MAP','Cap refill','Temp']);
+        if(vLine) out.push(vLine);
+        // Always show both normal checkboxes and abnormal text
+        const ckC = checkedLine(card); if(ckC) out.push(ckC);
+        const abnC = getAbnormal(card); if(abnC) out.push(abnC);
+      } else if(letter==='D'){
+        const ge=document.getElementById('gcs-e'), gv=document.getElementById('gcs-v'), gm=document.getElementById('gcs-m'), gt=document.getElementById('gcs-total');
+        if(ge&&gv&&gm) out.push('GCS: E'+ge.value+' V'+gv.value+' M'+gm.value+' = '+gt.textContent);
+        // Always show both normal checkboxes and abnormal text
+        const ckD = checkedLine(card); if(ckD) out.push(ckD);
+        const abnD = getAbnormal(card); if(abnD) out.push(abnD);
+      } else {
+        // X, A, E: always show both checked items and abnormal text
+        const ck = checkedLine(card); if(ck) out.push(ck);
+        const abn = getAbnormal(card); if(abn) out.push(abn);
+        // ETT size/depth for A
+        const ll = labelledLine(card, ['ETT size','ETT depth']);
+        if(ll) out.push(ll);
+      }
+    });
+
+    // ── Adjuncts ──
+    sec('Adjuncts');
+    const adjSec = document.getElementById('sec-adj');
+    adjSec.querySelectorAll('.adj-card').forEach(card=>{
+      const hdrTxt = stripEmoji(card.querySelector('.adj-header').textContent).trim();
+      const ckAdj = checkedLine(card);
+      const taAdj = card.querySelector('textarea');
+      const abnAdj = taAdj ? taAdj.value.trim() : '';
+      if(ckAdj) out.push(hdrTxt + ': ' + ckAdj);
+      if(abnAdj) out.push(ckAdj ? abnAdj : hdrTxt + ': ' + abnAdj);
+    });
+
+    // ── Secondary Survey ──
+    sec('Secondary Survey');
+    const secSec = document.getElementById('sec-secondary');
+    // AMPLE — include normal-finding checkboxes + text input for each letter
+    ['A','M','P','L','E'].forEach(lbl=>{
+      const el = secSec.querySelector('[data-label="'+lbl+'"]');
+      const fieldContainer = el ? el.closest('.ample-field') : null;
+      const parts = [];
+      if(fieldContainer){ const ck = checkedLine(fieldContainer); if(ck) parts.push(ck); }
+      if(el && el.value.trim()) parts.push(el.value.trim());
+      if(parts.length) out.push(lbl + ': ' + parts.join(', '));
+    });
+    // Head-to-Toe abbreviated as PE
+    const httEl = secSec.querySelector('[data-label="Head-to-Toe Examination"]');
+    if(httEl && httEl.value.trim()) out.push('PE: ' + httEl.value.trim());
+
+    // ── Lab & Additional Images (no section header) ──
+    out.push('');
+    const labImgSec = document.getElementById('sec-lab-img');
+    labImgSec.querySelectorAll('[data-label]').forEach(el=>{
+      if(el.dataset.label === 'Additional Images') return;
+      const val = el.value ? el.value.trim() : '';
+      if(val) out.push(el.dataset.label + ': ' + val);
+    });
+
+    // ── Dx ──
+    sec('Dx');
+    const diagSec = document.getElementById('sec-diag');
+    const diagCk = checkedLine(diagSec);
+    if(diagCk) out.push(diagCk);
+    const diagVal = diagSec.querySelector('textarea');
+    if(diagVal && diagVal.value.trim()) out.push(diagVal.value.trim());
+
+    // ── Mx ──
+    sec('Mx');
+    const mgmtSec = document.getElementById('sec-mgmt');
+    const mgmtCk = checkedLine(mgmtSec);
+    if(mgmtCk) out.push(mgmtCk);
+    const mgmtVal = mgmtSec.querySelector('textarea');
+    if(mgmtVal && mgmtVal.value.trim()) out.push(mgmtVal.value.trim());
+
+    // ── Plan ──
+    sec('Plan');
+    const planSec = document.getElementById('sec-plan');
+    const planCk = checkedLine(planSec);
+    if(planCk) out.push(planCk);
+    const planVal = planSec.querySelector('textarea');
+    if(planVal && planVal.value.trim()) out.push(planVal.value.trim());
+
+    const text = out.filter(l=>l!==undefined).join('\n');
+    navigator.clipboard.writeText(text).then(()=>{
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(()=>{ toast.style.display='none'; }, 2500);
+    }).catch(()=>{ alert('Copy failed. Please select all and copy manually.'); });
+  }
+</script>
+</body>
+</html>
