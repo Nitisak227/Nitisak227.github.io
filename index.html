@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PKH Medical Staff Organization</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #eef2f7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ──────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #1a3a5c 0%, #0f2540 100%);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .header-text h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.2px;
+    }
+
+    /* Admin slot overrides for dark header */
+    #pkh-admin-slot .pkh-login-btn {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      color: #fff;
+    }
+    #pkh-admin-slot .pkh-login-btn:hover { background: rgba(255,255,255,.25); }
+    #pkh-admin-slot .pkh-admin-badge {
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.3);
+      color: #fff;
+    }
+
+    /* ── Main layout ─────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      padding: 44px 36px;
+      gap: 40px;
+      max-width: 1080px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Left: nav cards ─────────────────── */
+    .nav-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 300px;
+      flex-shrink: 0;
+      justify-content: center;
+    }
+    .nav-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 22px;
+      background: #fff;
+      border: 1px solid #dde4ef;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: background .18s, transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .nav-card:hover {
+      background: #f4f8ff;
+      border-color: #b8cfe8;
+      transform: translateX(4px);
+      box-shadow: 0 4px 18px rgba(26,58,92,.1);
+    }
+    .nav-tag {
+      width: 46px; height: 46px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .nav-card:nth-child(1) .nav-tag { background: #fff0f0; }
+    .nav-card:nth-child(2) .nav-tag { background: #fff8e1; }
+    .nav-card:nth-child(3) .nav-tag { background: #e8f5e9; }
+    .nav-card h3 {
+      font-size: .95rem;
+      font-weight: 600;
+      color: #1a2e4a;
+      letter-spacing: -.1px;
+      flex: 1;
+    }
+    .nav-arrow {
+      font-size: 1.1rem;
+      color: #bcc9d8;
+      transition: color .18s, transform .18s;
+    }
+    .nav-card:hover .nav-arrow {
+      color: #1a73e8;
+      transform: translateX(4px);
+    }
+
+    /* ── Right: image slot ───────────────── */
+    .img-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+    .img-frame {
+      position: relative;
+      background: #e8edf4;
+      border: 2px dashed #c8d3e2;
+      border-radius: 18px;
+      overflow: hidden;
+      width: 100%;
+      aspect-ratio: 16/10;
+    }
+    /* solid border once image is loaded */
+    .img-frame.has-image {
+      border: 1px solid #c8d3e2;
+    }
+    #slotImg {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* Upload bar — hidden until admin mode */
+    .upload-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+    body.pkh-edit .upload-bar { display: flex; }
+
+    .upload-btn {
+      padding: 9px 24px;
+      background: #1a3a5c;
+      border: none;
+      border-radius: 9px;
+      color: #fff;
+      font-size: .84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+      font-family: inherit;
+    }
+    .upload-btn:hover { background: #0f2540; }
+    .upload-hint {
+      font-size: .75rem;
+      color: #8898aa;
+    }
+
+    /* ── Footer ──────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 14px 20px;
+      font-size: .75rem;
+      color: #8898aa;
+      border-top: 1px solid #dde4ef;
+      background: #fff;
+    }
+    .footer-name { color: #1a2e4a; font-weight: 600; }
+
+    /* ── Responsive ──────────────────────── */
+    @media (max-width: 700px) {
+      main { flex-direction: column; padding: 24px 16px; }
+      .nav-col { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-text">
+    <h1>PKH Medical Staff Organization</h1>
+  </div>
+  <div id="pkh-admin-slot"></div>
+</header>
+
+<main>
+  <!-- Left: nav cards -->
+  <div class="nav-col">
+    <a class="nav-card" href="Trauma refer.html">
+      <div class="nav-tag">🚨</div>
+      <h3>Refer Trauma</h3>
+      <span class="nav-arrow">&#8250;</span>
+    </a>
+    <a class="nav-card" href="stroke.html">
+      <div class="nav-tag">⚡</div>
+      <h3>Refer Stroke Fast Track</h3>
+      <span class="nav-arrow">&#8250;</span>
+    </a>
+    <a class="nav-card" href="guideline.html">
+      <div class="nav-tag">📋</div>
+      <h3>Guidelines of Prangku Hospital Interns</h3>
+      <span class="nav-arrow">&#8250;</span>
+    </a>
+  </div>
+
+  <!-- Right: single image slot -->
+  <div class="img-col">
+    <div class="img-frame" id="imgFrame">
+      <img id="slotImg" alt="Uploaded photo"/>
+    </div>
+    <div class="upload-bar">
+      <button class="upload-btn" id="uploadBtn">Upload Photo</button>
+      <input type="file" id="imgFileInp" accept="image/*" style="display:none"/>
+    </div>
+  </div>
+</main>
+
+<footer>
+  For internal clinical use only &nbsp;&middot;&nbsp;
+  <span class="footer-name">Nitisak Kitcharoentanarak, MD</span>
+  &nbsp;&middot;&nbsp; Last update 24/3/69
+</footer>
+
+<script src="admin.js"></script>
+<script>
+  // Disable "Add Section" on this page — not applicable for the index
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('pkh-addsecbtn');
+    if (btn) btn.style.display = 'none';
+  });
+</script>
+<script>
+(function () {
+  // Clear any old cached content from previous page versions
+  localStorage.removeItem('pkh_page_index');
+
+  var STORE_KEY = 'pkh_index_image';
+
+  function showImage(src) {
+    var img   = document.getElementById('slotImg');
+    var frame = document.getElementById('imgFrame');
+    img.src = src;
+    img.style.display = 'block';
+    frame.classList.add('has-image');
+  }
+
+  function resizeAndStore(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var dataURL = e.target.result;
+      localStorage.setItem(STORE_KEY, dataURL);
+      showImage(dataURL);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById('uploadBtn').onclick = function () {
+    document.getElementById('imgFileInp').click();
+  };
+  document.getElementById('imgFileInp').onchange = function (e) {
+    var file = e.target.files[0];
+    if (file) resizeAndStore(file);
+    e.target.value = '';
+  };
+
+  // Auto-load saved image for all visitors
+  var saved = localStorage.getItem(STORE_KEY);
+  if (saved) showImage(saved);
+})();
+</script>
+
+</body>
+</html>
